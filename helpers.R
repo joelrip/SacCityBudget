@@ -9,14 +9,14 @@ grand_total = sum(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" 
                                                   SacBudget$Year == 2016 &
                                                   SacBudget$DEPARTMENT != "Non-Appropriated")])
 departments = as.character(unique(SacBudget$DEPARTMENT))[order(as.character(unique(SacBudget$DEPARTMENT)))]
-divisions = unique(SacBudget$DIVISION)
-sections = unique(SacBudget$SECTION)
+divisions = as.character(unique(SacBudget$DIVISION))[order(as.character(unique(SacBudget$DIVISION)))]
+sections = as.character(unique(SacBudget$SECTION))[order(as.character(unique(SacBudget$SECTION)))]
 fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
-fund_groups = unique(SacBudget$FUND.GROUP)
-fund_names = unique(SacBudget$FUND.NAME)
+fund_groups = as.character(unique(SacBudget$FUND.GROUP))[order(as.character(unique(SacBudget$FUND.GROUP)))]
+fund_names = as.character(unique(SacBudget$FUND.NAME))[order(as.character(unique(SacBudget$FUND.NAME)))]
 object_classes = as.character(unique(SacBudget$OBJECT.CLASS))[order(as.character(unique(SacBudget$OBJECT.CLASS)))]
-account_categories = unique(SacBudget$ACCOUNT.CATEGORY)
-account_names = unique(SacBudget$ACCOUNT.NAME)
+account_categories = as.character(unique(SacBudget$ACCOUNT.CATEGORY))[order(as.character(unique(SacBudget$ACCOUNT.CATEGORY)))]
+account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(unique(SacBudget$ACCOUNT.NAME)))]
 
 #Graph primary chart
 budget_graph = function(data_selection, data_subselection) {
@@ -24,10 +24,8 @@ budget_graph = function(data_selection, data_subselection) {
   #Check if subselection and change graph data accordingly
   if (data_subselection == "All") {
     graph_data = data_selection
-    total_budget = grand_total
   } else {
     graph_data = data_selection[which(data_selection == data_subselection)]
-    total_budget = sum(SacBudget$BUDGET.AMOUNT[which(data_selection == data_subselection)])
   }
   
   #Calculate current and last year's budget for each selected category

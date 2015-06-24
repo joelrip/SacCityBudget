@@ -22,7 +22,6 @@ dashboardPage(
              
              selectInput("primarySub", label = "All of them, or a specific one?",
                          choices = "")
-#            uiOutput("selection1")         
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",

@@ -34,7 +34,10 @@ server <- function(input, output, session) {
     if (input$primarySub == "All") {
       total_budget = grand_total
     } else {
-      total_budget = sum(SacBudget$BUDGET.AMOUNT[which(data1() == input$primarySub)])
+      total_budget = sum(SacBudget$BUDGET.AMOUNT[which(data1() == input$primarySub &
+                                                         SacBudget$EXP.REV == "Expenses" &
+                                                         SacBudget$Year == 2016 &
+                                                         SacBudget$DEPARTMENT != "Non-Appropriated")])
     }
     paste0("Total Budget: $", round(total_budget / 1000000, digits = 1), " million")
   })
