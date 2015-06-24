@@ -1,5 +1,5 @@
 ## Sac City Budget Visualization ##
-## helpers.R ##
+## helpers.R ## 
 
 #Read in data and calculate one-time variables
 SacBudget = read.csv("data/92727-city-of-sacramento-proposed-budget-fiscal-year-201516.csv")
@@ -19,25 +19,35 @@ account_categories = unique(SacBudget$ACCOUNT.CATEGORY)
 account_names = unique(SacBudget$ACCOUNT.NAME)
 
 #Graph primary chart
-budget_graph = function(data_selection) {
+budget_graph = function(data_selection, data_subselection) {
+  
+  #Check if subselection and change graph data accordingly
+  if (data_subselection == "All") {
+    graph_data = data_selection
+    total_budget = grand_total
+  } else {
+    graph_data = data_selection[which(data_selection == data_subselection)]
+    total_budget = sum(SacBudget$BUDGET.AMOUNT[which(data_selection == data_subselection)])
+  }
+  
   #Calculate current and last year's budget for each selected category
   budget_now = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
                                                          SacBudget$Year == 2016 &
                                                          SacBudget$DEPARTMENT != "Non-Appropriated")] ~
-                           data_selection[which(SacBudget$EXP.REV == "Expenses" &
+                           graph_data[which(SacBudget$EXP.REV == "Expenses" &
                                                   SacBudget$Year == 2016 &
                                                   SacBudget$DEPARTMENT != "Non-Appropriated")],
                          "sum", data = SacBudget)
-  names(budget_now)[1] = "data_selection"
+  names(budget_now)[1] = "graph_data"
   names(budget_now)[2] = "Budget1516"
   budget_last = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
                                                          SacBudget$Year == 2015 &
                                                          SacBudget$DEPARTMENT != "Non-Appropriated")] ~
-                           data_selection[which(SacBudget$EXP.REV == "Expenses" &
+                           graph_data[which(SacBudget$EXP.REV == "Expenses" &
                                                   SacBudget$Year == 2015 &
                                                   SacBudget$DEPARTMENT != "Non-Appropriated")],
                          "sum", data = SacBudget)
-  names(budget_last)[1] = "data_selection"
+  names(budget_last)[1] = "graph_data"
   names(budget_last)[2] = "Budget1415"
   
   #Calculate percent change from year to year
@@ -65,7 +75,7 @@ budget_graph = function(data_selection) {
           space = 1, horiz = TRUE, xaxt = "n")
 #  title("FY2015/16 Sacramento City Budget by Department", adj = 1)
   end_point = 0.5 + nrow(budget_both) + nrow(budget_both) - 1
-  axis(2, at = seq(1.5, end_point, by = 2), labels = budget_both$data_selection[order(budget_both$Budget1516)],
+  axis(2, at = seq(1.5, end_point, by = 2), labels = budget_both$graph_data[order(budget_both$Budget1516)],
        tick = FALSE, las = 1, cex.axis = 0.65)
   max_val = max(budget_both$Budget1516)
   label_vector = seq(0, floor(max_val / 20000000) * 20, 20)

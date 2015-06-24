@@ -4,7 +4,13 @@
 source("helpers.R")
 
 server <- function(input, output, session) {
-
+  data1 <- reactive({
+    switch(input$primary, 
+                 "Departments" = SacBudget$DEPARTMENT,
+                 "Fund Types" = SacBudget$FUND.TYPE,
+                 "Object Classes" = SacBudget$OBJECT.CLASS)
+  })
+  
   classification_list = reactive({
     switch(input$primary, 
          "Departments" = as.list(c("All",departments)),
@@ -20,12 +26,16 @@ server <- function(input, output, session) {
   output$title1 = renderText({input$primary})
   
   output$chart1 = renderPlot({
-    data <- switch(input$primary, 
-                   "Departments" = SacBudget$DEPARTMENT,
-                   "Fund Types" = SacBudget$FUND.TYPE,
-                   "Object Classes" = SacBudget$OBJECT.CLASS)
-    budget_graph(data)
+    data_sub = input$primarySub
+    budget_graph(data1(), data_sub)
   })
   
-  output$total1 = renderText({paste0("Total Budget: $", round(grand_total / 1000000, digits = 1), " million")})
+  output$total1 = renderText({
+    if (input$primarySub == "All") {
+      total_budget = grand_total
+    } else {
+      total_budget = sum(SacBudget$BUDGET.AMOUNT[which(data1() == input$primarySub)])
+    }
+    paste0("Total Budget: $", round(total_budget / 1000000, digits = 1), " million")
+  })
 }

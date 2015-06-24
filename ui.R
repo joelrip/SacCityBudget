@@ -16,8 +16,6 @@ dashboardPage(
            box(
              width = NULL, status = "primary",
              
-
-             
              selectInput("primary", label = "First, break down the budget by:",
                          choices = list("Departments", "Fund Types",
                                         "Object Classes"), selected = "Departments"),
