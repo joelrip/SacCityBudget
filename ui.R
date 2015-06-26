@@ -21,7 +21,7 @@ dashboardPage(
                                         "Object Classes"), selected = "Departments"),
              
              selectInput("primarySub", label = "All of them, or a specific one?",
-                         choices = "")
+                         choices = "All")
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",

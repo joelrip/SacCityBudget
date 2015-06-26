@@ -2,7 +2,7 @@
 ###Initial exploration of Sac City budget data
 ###__________________
 
-SacBudget = read.csv("IT_DATA PLATFORM-Final FY16 Proposed.csv")
+SacBudget = read.csv("data/92727-city-of-sacramento-proposed-budget-fiscal-year-201516.csv")
 names(SacBudget)[11] = "OBJECT.CLASS"
 attach(SacBudget)
 
@@ -10,7 +10,8 @@ table(Year)
 table(Fiscal.Year)
 table(DEPARTMENT)
 
-test_variable = SacBudget$OBJECT.CLASS
+test_variable = SacBudget$DEPARTMENT[which(SacBudget$DEPARTMENT == "Police")]
+test_variable = SacBudget$DEPARTMENT
 
 #Plot budget size for each Department
 DeptSize16 = aggregate(BUDGET.AMOUNT[which(EXP.REV == "Expenses" & Year == 2016 & DEPARTMENT != "Non-Appropriated")] ~
@@ -28,6 +29,9 @@ names(DeptSize15)[2] = "Budget1415"
 DeptSize = merge(DeptSize16, DeptSize15)
 DeptSize$PctChange = (DeptSize$Budget1516 / DeptSize$Budget1415) - 1
 DeptSize$PctChange[which(is.nan(DeptSize$PctChange))] = 0
+DeptSize$DEPARTMENT = as.character(DeptSize$DEPARTMENT)
+
+DeptSize = DeptSize[which(DeptSize$DEPARTMENT == "Police"),]
 
 #Color bars by percent change from previous year
 colfunc <- colorRampPalette(c("red", "white", "green4"))

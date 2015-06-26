@@ -22,8 +22,9 @@ server <- function(input, output, session) {
     updateSelectInput(session, "primarySub", choices = classification_list())
   })
 
-  
-  output$title1 = renderText({input$primary})
+  output$title1 = renderText({
+    paste0(input$primary, ": ", input$primarySub)
+  })
   
   output$chart1 = renderPlot({
     data_sub = input$primarySub

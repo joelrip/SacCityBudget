@@ -22,11 +22,11 @@ account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(
 budget_graph = function(data_selection, data_subselection) {
   
   #Check if subselection and change graph data accordingly
-  if (data_subselection == "All") {
+#  if (data_subselection == "All") {
     graph_data = data_selection
-  } else {
-    graph_data = data_selection[which(data_selection == data_subselection)]
-  }
+#  } else {
+#    graph_data = data_selection[which(data_selection == data_subselection)]
+#  }
   
   #Calculate current and last year's budget for each selected category
   budget_now = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
@@ -53,6 +53,11 @@ budget_graph = function(data_selection, data_subselection) {
   budget_both$PctChange = (budget_both$Budget1516 / budget_both$Budget1415) - 1
   budget_both$PctChange[which(is.nan(budget_both$PctChange))] = 0
   
+  #Subset to sub-selection, if necessary
+  if (data_subselection != "All") {
+    budget_both = budget_both[which(budget_both$graph_data == data_subselection), ]
+  }
+  
   #Color bars by percent change from previous year
   colfunc <- colorRampPalette(c("red", "white", "green4"))
   budget_both$ChangeCol = NA
@@ -67,14 +72,14 @@ budget_graph = function(data_selection, data_subselection) {
   }
   
   #Construct plot
-  par(mar = c(2,9,0,1))
+  par(mar = c(2,10,0,1))
   barplot(budget_both$Budget1516[order(budget_both$Budget1516)],
           col = budget_both$ChangeCol[order(budget_both$Budget1516)],
           space = 1, horiz = TRUE, xaxt = "n")
 #  title("FY2015/16 Sacramento City Budget by Department", adj = 1)
   end_point = 0.5 + nrow(budget_both) + nrow(budget_both) - 1
   axis(2, at = seq(1.5, end_point, by = 2), labels = budget_both$graph_data[order(budget_both$Budget1516)],
-       tick = FALSE, las = 1, cex.axis = 0.65)
+       tick = FALSE, las = 1, cex.axis = 0.7)
   max_val = max(budget_both$Budget1516)
   label_vector = seq(0, floor(max_val / 20000000) * 20, 20)
   axis(1, at = seq(0, max_val, 20000000),
