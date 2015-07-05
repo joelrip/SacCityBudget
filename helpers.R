@@ -8,6 +8,7 @@ names(SacBudget)[11] = "OBJECT.CLASS"
 grand_total = sum(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
                                                   SacBudget$Year == 2016 &
                                                   SacBudget$DEPARTMENT != "Non-Appropriated")])
+
 departments = as.character(unique(SacBudget$DEPARTMENT))[order(as.character(unique(SacBudget$DEPARTMENT)))]
 divisions = as.character(unique(SacBudget$DIVISION))[order(as.character(unique(SacBudget$DIVISION)))]
 sections = as.character(unique(SacBudget$SECTION))[order(as.character(unique(SacBudget$SECTION)))]
@@ -20,13 +21,8 @@ account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(
 
 #Graph primary chart
 budget_graph = function(data_selection, data_subselection) {
-  
-  #Check if subselection and change graph data accordingly
-#  if (data_subselection == "All") {
-    graph_data = data_selection
-#  } else {
-#    graph_data = data_selection[which(data_selection == data_subselection)]
-#  }
+
+  graph_data = data_selection
   
   #Calculate current and last year's budget for each selected category
   budget_now = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
@@ -84,7 +80,57 @@ budget_graph = function(data_selection, data_subselection) {
   label_vector = seq(0, floor(max_val / 20000000) * 20, 20)
   axis(1, at = seq(0, max_val, 20000000),
        labels = paste0("$",label_vector,"M"), cex.axis = 0.85)
+}
+
+budget_table = function(data_selection, data_subselection) {
+
+    graph_data = data_selection
   
-  #Calculate total
+  #Calculate current and last year's budget for each selected category
+  budget_now = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
+                                                         SacBudget$Year == 2016 &
+                                                         SacBudget$DEPARTMENT != "Non-Appropriated")] ~
+                           graph_data[which(SacBudget$EXP.REV == "Expenses" &
+                                              SacBudget$Year == 2016 &
+                                              SacBudget$DEPARTMENT != "Non-Appropriated")],
+                         "sum", data = SacBudget)
+  names(budget_now)[1] = "graph_data"
+  names(budget_now)[2] = "Budget1516"
+  budget_last = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
+                                                          SacBudget$Year == 2015 &
+                                                          SacBudget$DEPARTMENT != "Non-Appropriated")] ~
+                            graph_data[which(SacBudget$EXP.REV == "Expenses" &
+                                               SacBudget$Year == 2015 &
+                                               SacBudget$DEPARTMENT != "Non-Appropriated")],
+                          "sum", data = SacBudget)
+  names(budget_last)[1] = "graph_data"
+  names(budget_last)[2] = "Budget1415"
+  
+  #Calculate percent change from year to year
+  budget_both = merge(budget_now, budget_last)
+  budget_both$PctChange = (budget_both$Budget1516 / budget_both$Budget1415) - 1
+  budget_both$PctChange[which(is.nan(budget_both$PctChange))] = 0
+  
+  #Subset to sub-selection, if necessary
+  if (data_subselection != "All") {
+    budget_both = budget_both[which(budget_both$graph_data == data_subselection), ]
+  }
+  
+  #Color bars by percent change from previous year
+  colfunc <- colorRampPalette(c("red", "white", "green4"))
+  budget_both$ChangeCol = NA
+  for (item in 1:nrow(budget_both)) {
+    if (budget_both$PctChange[item] > -0.5 & budget_both$PctChange[item] < 0.5) {
+      budget_both$ChangeCol[item] = colfunc(100)[round((budget_both$PctChange[item] * 100) + 50)]
+    } else if (budget_both$PctChange[item] <= -0.5) {
+      budget_both$ChangeCol[item] = colfunc(100)[1]
+    } else {
+      budget_both$ChangeCol[item] = colfunc(100)[100]
+    }
+  }
+  
+  budget_both$Budget1516 = round(budget_both$Budget1516 / 1000000, digits = 1)
+  budget_both = budget_both[order(budget_both$Budget1516, decreasing = TRUE),]
+  return(budget_both)
   
 }

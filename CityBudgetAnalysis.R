@@ -64,6 +64,23 @@ text(x = 0, y = seq(1.5,end_point,by=2), pos = 2, xpd = TRUE,
 axis(1, at = c(0,20000000,40000000,60000000,80000000,100000000,120000000),
      labels = c("","$20M","$40M","$60M","$80M","$100M","$120M"), cex.axis = 0.85)
 
+bar_color = DeptSize$ChangeCol
+DeptSize = DeptSize[,c(1,2,4)]
+datatable(DeptSize, rownames = FALSE, class = "compact",
+          colnames = c("", "Amount in Millions", "Change"),
+          options = list(searching = FALSE,
+                         pageLength = 20,
+                         dom = "t")) %>%
+  formatStyle("Budget1516",
+              background = styleColorBar(DeptSize$Budget1516, bar_color, angle = -90),
+              backgroundSize = "100% 90%",
+              backgroundRepeat = "no-repeat",
+              backgroundPosition = "center"
+  ) %>%
+  formatStyle(c(1:3), fontSize = "12px") %>%
+  formatCurrency("Budget1516", digits = 1) %>%
+  formatPercentage("PctChange")
+
 str(aggregate(Id ~ DEPARTMENT, "length", data = SacBudget))
 
 length(table(DIVISION))

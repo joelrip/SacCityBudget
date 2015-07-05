@@ -2,6 +2,8 @@
 ## ui.R ##
 library(shinydashboard)
 library(shiny)
+library(DT)
+
 
 dashboardPage(
   dashboardHeader(
@@ -25,7 +27,8 @@ dashboardPage(
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",
-             plotOutput("chart1")
+#             plotOutput("chart1"),
+             dataTableOutput("table1")
            ),
            box(
              width = NULL, background = "light-blue",

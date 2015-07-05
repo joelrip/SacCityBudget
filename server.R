@@ -1,6 +1,7 @@
 ## Sac City Budget Visualization ##
 ## server.R ##
 
+
 source("helpers.R")
 
 server <- function(input, output, session) {
@@ -26,9 +27,35 @@ server <- function(input, output, session) {
     paste0(input$primary, ": ", input$primarySub)
   })
   
-  output$chart1 = renderPlot({
-    data_sub = input$primarySub
-    budget_graph(data1(), data_sub)
+#  output$chart1 = renderPlot({
+#    data_sub = input$primarySub
+#    budget_graph(data1(), data_sub)
+#  })
+  
+  output$table1 = renderDataTable({
+    first_table = budget_table(data1(), input$primarySub)
+    bar_colors = first_table$ChangeCol
+    first_table = first_table[,c(1,2,4)]
+    datatable(first_table, rownames = FALSE, class = "compact",
+              colnames = c("", "Amount in Millions", "Change"),
+              options = list(searching = FALSE,
+                             pageLength = 20,
+                             dom = "t")) %>%
+      formatStyle("Budget1516",
+                  background = styleColorBar(first_table$Budget1516, color = "steelblue", angle = -90),
+                  backgroundSize = "100% 90%",
+                  backgroundRepeat = "no-repeat",
+                  backgroundPosition = "center"
+      ) %>%
+      formatStyle("PctChange",
+                  color = styleInterval(c(-.2, -.15, -.1, -.05, 0, .05, .1, .15, .2),
+                                        c("#FF0000", "#F02A2A", "#E25454", "#D37E7E", "#C5A8A8",
+                                          "#ACB8AC", "#8AAD8A", "#67A167", "#449644", "#228B22")),
+                  fontWeight = 'bold'
+      ) %>%
+      formatStyle(c(1:3), fontSize = "12px") %>%
+      formatCurrency("Budget1516", digits = 1) %>%
+      formatPercentage("PctChange")
   })
   
   output$total1 = renderText({
