@@ -6,5 +6,5 @@ This is an exploratory project to visualize data from the City of Sacramento's 2
 All you need to run the dashboard in its current state is:
 * [R](http://www.r-project.org/)
 * [R Studio](http://www.rstudio.com/)
-* The Shiny and Shiny Dashboard packages for R
+* The Shiny, Shiny Dashboard, and DT packages for R
 * The files in this repository
