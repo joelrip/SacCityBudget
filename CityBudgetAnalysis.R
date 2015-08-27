@@ -10,18 +10,19 @@ table(Year)
 table(Fiscal.Year)
 table(DEPARTMENT)
 
+budget_data = SacBudget[which(SacBudget$FUND.TYPE == "Enterprise Funds"),]
 test_variable = SacBudget$DEPARTMENT[which(SacBudget$DEPARTMENT == "Police")]
 test_variable = SacBudget$DEPARTMENT
 
 #Plot budget size for each Department
 DeptSize16 = aggregate(BUDGET.AMOUNT[which(EXP.REV == "Expenses" & Year == 2016 & DEPARTMENT != "Non-Appropriated")] ~
                        test_variable[which(EXP.REV == "Expenses" & Year == 2016 & DEPARTMENT != "Non-Appropriated")],
-                     "sum", data = SacBudget)
+                     "sum", data = budget_data)
 names(DeptSize16)[1] = "DEPARTMENT"
 names(DeptSize16)[2] = "Budget1516"
 DeptSize15 = aggregate(BUDGET.AMOUNT[which(EXP.REV == "Expenses" & Year == 2015 & DEPARTMENT != "Non-Appropriated")] ~
                          test_variable[which(EXP.REV == "Expenses" & Year == 2015 & DEPARTMENT != "Non-Appropriated")],
-                       "sum", data = SacBudget)
+                       "sum", data = budget_data)
 names(DeptSize15)[1] = "DEPARTMENT"
 names(DeptSize15)[2] = "Budget1415"
 

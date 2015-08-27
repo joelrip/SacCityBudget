@@ -45,16 +45,15 @@ dashboardPage(
                          selected = ""),
              
              selectInput("secondarySub", label = "All of them, or a specific one?",
-                         choices = list("All" = 1, "???" = 2,
-                                        "???" = 3), selected = 1)
+                         choices = "All")
            ),
            box(
              title = textOutput("title2"), width = NULL, status = "warning",
-             plotOutput("chart2")
+             dataTableOutput("table2")
            ),
            box(
              width = NULL, background = "yellow",
-             h4(textOutput("selection1"), align = "center")
+             h4(textOutput("total2"), align = "center")
            )
     ),
     
