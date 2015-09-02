@@ -39,10 +39,19 @@ server <- function(input, output, session) {
     datatable(first_table, rownames = FALSE, class = "compact",
               colnames = c("", "Amount in Millions", "Change"),
               options = list(searching = FALSE,
-                             pageLength = 20,
-                             dom = "t")) %>%
+                             pageLength = 40,
+                             dom = "t",
+                               columnDefs = list(list(
+                                 targets = 0,
+                                 render = JS(
+                                   "function(data, type, row, meta) {",
+                                   "return type === 'display' && data.length > 35 ?",
+                                   "'<span title=\"' + data + '\">' + data.substr(0, 35) + '...</span>' : data;",
+                                   "}")
+                               ))
+                             )) %>%
       formatStyle("Budget1516",
-                  background = styleColorBar(first_table$Budget1516, color = "steelblue", angle = -90),
+                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "steelblue", angle = -90),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -106,14 +115,20 @@ server <- function(input, output, session) {
   })
   
 #   if (input$primarySub == "All") {
-#     output$table2 = renderText({"blank"})
+#     output$table2 = renderText({""})
 #   } else {
 #     
 #   }
   
   
   output$table2 = renderDataTable({
-    if (input$primarySub != "All") {
+    if (input$primarySub == "All" | input$secondary == "") {
+      budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET.AMOUNT" = c(0, 0),
+                               "EXP.REV" = c("Expenses", "Expenses"), "Year" = c(2015, 2016),
+                               "DEPARTMENT" = c("One", "One"))
+      data_selection = "Category"
+      data_subselection = "Nothing Selected"
+    } else if (input$primarySub != "All") {
       domain = which(names(SacBudget) == data1())
       budget_data = SacBudget[which(SacBudget[,domain] == input$primarySub),]
       data_selection = data2()
@@ -125,15 +140,24 @@ server <- function(input, output, session) {
       data_subselection = input$primarySub
     }
     first_table = budget_table(data_selection, data_subselection, budget_data)
-    bar_colors = first_table$ChangeCol
+#    bar_colors = first_table$ChangeCol
     first_table = first_table[,c(1,2,4)]
     datatable(first_table, rownames = FALSE, class = "compact",
               colnames = c("", "Amount in Millions", "Change"),
               options = list(searching = FALSE,
-                             pageLength = 20,
-                             dom = "t")) %>%
+                             pageLength = 40,
+                             dom = "t",
+                             columnDefs = list(list(
+                               targets = 0,
+                               render = JS(
+                                 "function(data, type, row, meta) {",
+                                 "return type === 'display' && data.length > 35 ?",
+                                 "'<span title=\"' + data + '\">' + data.substr(0, 35) + '...</span>' : data;",
+                                 "}")
+                             ))
+                             )) %>%
       formatStyle("Budget1516",
-                  background = styleColorBar(first_table$Budget1516, color = "steelblue", angle = -90),
+                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "steelblue", angle = -90),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -146,7 +170,7 @@ server <- function(input, output, session) {
       ) %>%
       formatStyle(c(1:3), fontSize = "12px") %>%
       formatCurrency("Budget1516", digits = 1) %>%
-      formatPercentage("PctChange")
+      formatPercentage("PctChange") 
   })
   
   output$total2 = renderText({

@@ -7,8 +7,8 @@ library(DT)
 
 dashboardPage(
   dashboardHeader(
-    title = "City of Sacramento Budget Visualization",
-    titleWidth = 400
+    title = "City of Sacramento 2015-16 Budget Explorer",
+    titleWidth = 475
   ),
   dashboardSidebar(
     disable = TRUE
@@ -18,11 +18,11 @@ dashboardPage(
            box(
              width = NULL, status = "primary",
              
-             selectInput("primary", label = "First, break down the budget by:",
+             selectInput("primary", label = "What do you want to break the budget down by first?",
                          choices = list("Departments", "Fund Types",
                                         "Object Classes"), selected = "Departments"),
              
-             selectInput("primarySub", label = "All of them, or a specific one?",
+             selectInput("primarySub", label = "To explore in detail to the right, select a specific one:",
                          choices = "All")
            ),
            box(
@@ -39,7 +39,7 @@ dashboardPage(
     column(width = 4,
            box(
              width = NULL, status = "warning",
-             selectInput("secondary", label = "Second, break down the budget further by:",
+             selectInput("secondary", label = "Break down your selection to the left further by:",
                          choices = list("", "Departments", "Divisions", "Sections", "Fund Types", "Fund Groups",
                                         "Fund Names", "Object Classes", "Account Categories", "Account Names"),
                          selected = ""),
