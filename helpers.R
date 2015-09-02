@@ -130,7 +130,7 @@ budget_table = function(data_selection, data_subselection, budget_data) {
 #     }
 #   }
   
-  budget_both$Budget1516 = round(budget_both$Budget1516 / 1000000, digits = 1)
+  budget_both$Budget1516 = round(budget_both$Budget1516 / 1000000, digits = 2)
   budget_both = budget_both[order(budget_both$Budget1516, decreasing = TRUE),]
   return(budget_both)
   

@@ -44,7 +44,7 @@ dashboardPage(
                                         "Fund Names", "Object Classes", "Account Categories", "Account Names"),
                          selected = ""),
              
-             selectInput("secondarySub", label = "All of them, or a specific one?",
+             selectInput("secondarySub", label = "To explore in more detail to the right, select a specific one:",
                          choices = "All")
            ),
            box(
@@ -59,13 +59,22 @@ dashboardPage(
     
     column(width = 4,
            box(
-             title = "Title 2", width = NULL, solidHeader = TRUE,
-             "Box content"
+             width = NULL, status = "danger",
+             selectInput("tertiary", label = "Break down your selection to the left further by:",
+                         choices = list("", "Departments", "Divisions", "Sections", "Fund Types", "Fund Groups",
+                                        "Fund Names", "Object Classes", "Account Categories", "Account Names"),
+                         selected = "")
+#              selectInput("tertiarySub", label = "All of them, or a specific one?",
+#                          choices = "All")
            ),
-           box(
-             title = "Title 6", width = NULL, background = "maroon",
-             "A box with a solid maroon background"
-           )
+          box(
+            title = textOutput("title3"), width = NULL, status = "danger",
+            dataTableOutput("table3")
+          ),
+          box(
+            width = NULL, background = "red",
+            h4(textOutput("total3"), align = "center")
+          )
     )
   )
 )
