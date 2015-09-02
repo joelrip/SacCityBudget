@@ -2,11 +2,13 @@
 ## ui.R ##
 library(shinydashboard)
 library(shiny)
+library(DT)
+
 
 dashboardPage(
   dashboardHeader(
-    title = "City of Sacramento Budget Visualization",
-    titleWidth = 400
+    title = "City of Sacramento 2015-16 Budget Explorer",
+    titleWidth = 475
   ),
   dashboardSidebar(
     disable = TRUE
@@ -16,19 +18,17 @@ dashboardPage(
            box(
              width = NULL, status = "primary",
              
-
-             
-             selectInput("primary", label = "First, break down the budget by:",
+             selectInput("primary", label = "What do you want to break the budget down by first?",
                          choices = list("Departments", "Fund Types",
                                         "Object Classes"), selected = "Departments"),
              
-             selectInput("primarySub", label = "All of them, or a specific one?",
-                         choices = "")
-#            uiOutput("selection1")         
+             selectInput("primarySub", label = "To explore in detail to the right, select a specific one:",
+                         choices = "All")
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",
-             plotOutput("chart1")
+#             plotOutput("chart1"),
+             dataTableOutput("table1")
            ),
            box(
              width = NULL, background = "light-blue",
@@ -39,34 +39,42 @@ dashboardPage(
     column(width = 4,
            box(
              width = NULL, status = "warning",
-             selectInput("secondary", label = "Second, break down the budget further by:",
+             selectInput("secondary", label = "Break down your selection to the left further by:",
                          choices = list("", "Departments", "Divisions", "Sections", "Fund Types", "Fund Groups",
                                         "Fund Names", "Object Classes", "Account Categories", "Account Names"),
                          selected = ""),
              
-             selectInput("secondarySub", label = "All of them, or a specific one?",
-                         choices = list("All" = 1, "???" = 2,
-                                        "???" = 3), selected = 1)
+             selectInput("secondarySub", label = "To explore in more detail to the right, select a specific one:",
+                         choices = "All")
            ),
            box(
              title = textOutput("title2"), width = NULL, status = "warning",
-             plotOutput("chart2")
+             dataTableOutput("table2")
            ),
            box(
              width = NULL, background = "yellow",
-             h4(textOutput("selection1"), align = "center")
+             h4(textOutput("total2"), align = "center")
            )
     ),
     
     column(width = 4,
            box(
-             title = "Title 2", width = NULL, solidHeader = TRUE,
-             "Box content"
+             width = NULL, status = "danger",
+             selectInput("tertiary", label = "Break down your selection to the left further by:",
+                         choices = list("", "Departments", "Divisions", "Sections", "Fund Types", "Fund Groups",
+                                        "Fund Names", "Object Classes", "Account Categories", "Account Names"),
+                         selected = "")
+#              selectInput("tertiarySub", label = "All of them, or a specific one?",
+#                          choices = "All")
            ),
-           box(
-             title = "Title 6", width = NULL, background = "maroon",
-             "A box with a solid maroon background"
-           )
+          box(
+            title = textOutput("title3"), width = NULL, status = "danger",
+            dataTableOutput("table3")
+          ),
+          box(
+            width = NULL, background = "red",
+            h4(textOutput("total3"), align = "center")
+          )
     )
   )
 )
