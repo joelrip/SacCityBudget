@@ -211,7 +211,7 @@ server <- function(input, output, session) {
   })
   
   output$table3 = renderDataTable({
-    if (input$secondarySub == "All" | input$tertiary == "") {
+    if (input$secondarySub == "All" | input$tertiary == "" | input$primarySub == "All") {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET.AMOUNT" = c(0, 0),
                                "EXP.REV" = c("Expenses", "Expenses"), "Year" = c(2015, 2016),
                                "DEPARTMENT" = c("One", "One"))
