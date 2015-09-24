@@ -7,4 +7,4 @@ All you need to run the dashboard in its current state is:
 * [R](http://www.r-project.org/)
 * [R Studio](http://www.rstudio.com/)
 * The Shiny, Shiny Dashboard, and DT packages for R
-* The files in this repository
+* ui.R, server.R, and helpers.R from this repository
