@@ -93,21 +93,21 @@ server <- function(input, output, session) {
            "Account Names" = "ACCOUNT.NAME")
   })
   
-  classification_list2 = reactive({
-    switch(input$secondary, 
-           "Departments" = as.list(c("All",departments)),
-           "Divisions" = as.list(c("All",divisions)),
-           "Sections" = as.list(c("All", sections)),
-           "Fund Types" = as.list(c("All",fund_types)),
-           "Fund Groups" = as.list(c("All", fund_groups)),
-           "Fund Names" = as.list(c("All", fund_names)),
-           "Object Classes" = as.list(c("All",object_classes)),
-           "Account Categories" = as.list(c("All", account_categories)),
-           "Account Names" = as.list(c("All", account_names)))
-  })
+#   classification_list2 = reactive({
+#     switch(input$secondary, 
+#            "Departments" = as.list(c("All",departments)),
+#            "Divisions" = as.list(c("All",divisions)),
+#            "Sections" = as.list(c("All", sections)),
+#            "Fund Types" = as.list(c("All",fund_types)),
+#            "Fund Groups" = as.list(c("All", fund_groups)),
+#            "Fund Names" = as.list(c("All", fund_names)),
+#            "Object Classes" = as.list(c("All",object_classes)),
+#            "Account Categories" = as.list(c("All", account_categories)),
+#            "Account Names" = as.list(c("All", account_names)))
+#   })
   
   observe({
-    updateSelectInput(session, "secondarySub", choices = classification_list2())
+    updateSelectInput(session, "secondarySub", choices = class_list(data2(), data1(), input$primarySub, SacBudget))
   })
   
   output$title2 = renderText({
@@ -211,7 +211,7 @@ server <- function(input, output, session) {
   })
   
   output$table3 = renderDataTable({
-    if (input$secondarySub == "All" | input$tertiary == "") {
+    if (input$secondarySub == "All" | input$tertiary == "" | input$primarySub == "All") {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET.AMOUNT" = c(0, 0),
                                "EXP.REV" = c("Expenses", "Expenses"), "Year" = c(2015, 2016),
                                "DEPARTMENT" = c("One", "One"))

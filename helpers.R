@@ -12,12 +12,20 @@ grand_total = sum(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" 
 departments = as.character(unique(SacBudget$DEPARTMENT))[order(as.character(unique(SacBudget$DEPARTMENT)))]
 divisions = as.character(unique(SacBudget$DIVISION))[order(as.character(unique(SacBudget$DIVISION)))]
 sections = as.character(unique(SacBudget$SECTION))[order(as.character(unique(SacBudget$SECTION)))]
-fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
-fund_groups = as.character(unique(SacBudget$FUND.GROUP))[order(as.character(unique(SacBudget$FUND.GROUP)))]
-fund_names = as.character(unique(SacBudget$FUND.NAME))[order(as.character(unique(SacBudget$FUND.NAME)))]
-object_classes = as.character(unique(SacBudget$OBJECT.CLASS))[order(as.character(unique(SacBudget$OBJECT.CLASS)))]
-account_categories = as.character(unique(SacBudget$ACCOUNT.CATEGORY))[order(as.character(unique(SacBudget$ACCOUNT.CATEGORY)))]
-account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(unique(SacBudget$ACCOUNT.NAME)))]
+#fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
+#fund_groups = as.character(unique(SacBudget$FUND.GROUP))[order(as.character(unique(SacBudget$FUND.GROUP)))]
+#fund_names = as.character(unique(SacBudget$FUND.NAME))[order(as.character(unique(SacBudget$FUND.NAME)))]
+#object_classes = as.character(unique(SacBudget$OBJECT.CLASS))[order(as.character(unique(SacBudget$OBJECT.CLASS)))]
+#account_categories = as.character(unique(SacBudget$ACCOUNT.CATEGORY))[order(as.character(unique(SacBudget$ACCOUNT.CATEGORY)))]
+#account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(unique(SacBudget$ACCOUNT.NAME)))]
+
+class_list = function(second_selection, first_selection, first_subselection, budget_data) {
+  col_num = which(names(budget_data) == first_selection)
+  temp = budget_data[which(budget_data[,col_num] == first_subselection),]
+  col_num2 = which(names(temp) == second_selection)
+  returner = as.character(unique(temp[,col_num2]))[order(as.character(unique(temp[,col_num2])))]
+  return(as.list(c("All",returner)))
+}
 
 # #Graph primary chart
 # budget_graph = function(data_selection, data_subselection) {
@@ -135,65 +143,3 @@ budget_table = function(data_selection, data_subselection, budget_data) {
   return(budget_both)
   
 }
-
-# budget_table_2 = function(select_1, sub_1, select_2, sub_2) {
-# 
-#   #Subset based on which selection is subsetted 
-#   if (sub_1 != "All") {
-#     budget_data = SacBudget[which(SacBudget$select_1 == sub_1),]
-#     col_num = which(names(budget_data) == select_2)
-#     graph_data = budget_data[ , col_num]
-#   } else if (sub_2 != "All") {
-#     budget_data = SacBudget[which(SacBudget$select_2 == sub_2),]
-#     col_num = which(names(budget_data) == select_1)
-#     graph_data = budget_data[ , col_num]
-#   }
-#   
-#   #Calculate current and last year's budget for each selected category
-#   budget_now = aggregate(budget_data$BUDGET.AMOUNT[which(budget_data$EXP.REV == "Expenses" &
-#                                                          SacBudget$Year == 2016 &
-#                                                          SacBudget$DEPARTMENT != "Non-Appropriated")] ~
-#                            graph_data[which(SacBudget$EXP.REV == "Expenses" &
-#                                               SacBudget$Year == 2016 &
-#                                               SacBudget$DEPARTMENT != "Non-Appropriated")],
-#                          "sum", data = SacBudget)
-#   names(budget_now)[1] = "graph_data"
-#   names(budget_now)[2] = "Budget1516"
-#   budget_last = aggregate(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" &
-#                                                           SacBudget$Year == 2015 &
-#                                                           SacBudget$DEPARTMENT != "Non-Appropriated")] ~
-#                             graph_data[which(SacBudget$EXP.REV == "Expenses" &
-#                                                SacBudget$Year == 2015 &
-#                                                SacBudget$DEPARTMENT != "Non-Appropriated")],
-#                           "sum", data = SacBudget)
-#   names(budget_last)[1] = "graph_data"
-#   names(budget_last)[2] = "Budget1415"
-#   
-#   #Calculate percent change from year to year
-#   budget_both = merge(budget_now, budget_last)
-#   budget_both$PctChange = (budget_both$Budget1516 / budget_both$Budget1415) - 1
-#   budget_both$PctChange[which(is.nan(budget_both$PctChange))] = 0
-#   
-#   #Subset to sub-selection, if necessary
-#   if (sub_1 != "All") {
-#     budget_both = budget_both[which(budget_both$graph_data == select_1), ]
-#   }
-#   
-#   #Color bars by percent change from previous year
-#   colfunc <- colorRampPalette(c("red", "white", "green4"))
-#   budget_both$ChangeCol = NA
-#   for (item in 1:nrow(budget_both)) {
-#     if (budget_both$PctChange[item] > -0.5 & budget_both$PctChange[item] < 0.5) {
-#       budget_both$ChangeCol[item] = colfunc(100)[round((budget_both$PctChange[item] * 100) + 50)]
-#     } else if (budget_both$PctChange[item] <= -0.5) {
-#       budget_both$ChangeCol[item] = colfunc(100)[1]
-#     } else {
-#       budget_both$ChangeCol[item] = colfunc(100)[100]
-#     }
-#   }
-#   
-#   budget_both$Budget1516 = round(budget_both$Budget1516 / 1000000, digits = 1)
-#   budget_both = budget_both[order(budget_both$Budget1516, decreasing = TRUE),]
-#   return(budget_both)
-#   
-# }
