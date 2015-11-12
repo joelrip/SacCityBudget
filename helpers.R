@@ -10,12 +10,12 @@ grand_total = sum(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" 
                                                   SacBudget$DEPARTMENT != "Non-Appropriated")])
 
 departments = as.character(unique(SacBudget$DEPARTMENT))[order(as.character(unique(SacBudget$DEPARTMENT)))]
-divisions = as.character(unique(SacBudget$DIVISION))[order(as.character(unique(SacBudget$DIVISION)))]
-sections = as.character(unique(SacBudget$SECTION))[order(as.character(unique(SacBudget$SECTION)))]
-#fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
+#divisions = as.character(unique(SacBudget$DIVISION))[order(as.character(unique(SacBudget$DIVISION)))]
+#sections = as.character(unique(SacBudget$SECTION))[order(as.character(unique(SacBudget$SECTION)))]
+fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
 #fund_groups = as.character(unique(SacBudget$FUND.GROUP))[order(as.character(unique(SacBudget$FUND.GROUP)))]
 #fund_names = as.character(unique(SacBudget$FUND.NAME))[order(as.character(unique(SacBudget$FUND.NAME)))]
-#object_classes = as.character(unique(SacBudget$OBJECT.CLASS))[order(as.character(unique(SacBudget$OBJECT.CLASS)))]
+object_classes = as.character(unique(SacBudget$OBJECT.CLASS))[order(as.character(unique(SacBudget$OBJECT.CLASS)))]
 #account_categories = as.character(unique(SacBudget$ACCOUNT.CATEGORY))[order(as.character(unique(SacBudget$ACCOUNT.CATEGORY)))]
 #account_names = as.character(unique(SacBudget$ACCOUNT.NAME))[order(as.character(unique(SacBudget$ACCOUNT.NAME)))]
 

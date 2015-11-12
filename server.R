@@ -83,14 +83,14 @@ server <- function(input, output, session) {
   data2 <- reactive({
     switch(input$secondary, 
            "Departments" = "DEPARTMENT",
-           "Divisions" = "DIVISION",
-           "Sections" = "SECTION",
+           "...Divisions" = "DIVISION",
+           "......Sections" = "SECTION",
            "Fund Types" = "FUND.TYPE",
-           "Fund Groups" = "FUND.GROUP",
-           "Fund Names" = "FUND.NAME",
+           "...Fund Groups" = "FUND.GROUP",
+           "......Fund Names" = "FUND.NAME",
            "Object Classes" = "OBJECT.CLASS",
-           "Account Categories" = "ACCOUNT.CATEGORY",
-           "Account Names" = "ACCOUNT.NAME")
+           "...Account Categories" = "ACCOUNT.CATEGORY",
+           "......Account Names" = "ACCOUNT.NAME")
   })
   
 #   classification_list2 = reactive({
@@ -114,12 +114,9 @@ server <- function(input, output, session) {
     paste0(input$secondary, ": ", input$secondarySub)
   })
   
-#   if (input$primarySub == "All") {
-#     output$table2 = renderText({""})
-#   } else {
-#     
-#   }
-  
+  observe({
+    toggleState(id = "secondary", condition = input$primarySub != 'All')
+  })
   
   output$table2 = renderDataTable({
     if (input$primarySub == "All" | input$secondary == "") {
@@ -196,14 +193,14 @@ server <- function(input, output, session) {
   data3 <- reactive({
     switch(input$tertiary, 
            "Departments" = "DEPARTMENT",
-           "Divisions" = "DIVISION",
-           "Sections" = "SECTION",
+           "...Divisions" = "DIVISION",
+           "......Sections" = "SECTION",
            "Fund Types" = "FUND.TYPE",
-           "Fund Groups" = "FUND.GROUP",
-           "Fund Names" = "FUND.NAME",
+           "...Fund Groups" = "FUND.GROUP",
+           "......Fund Names" = "FUND.NAME",
            "Object Classes" = "OBJECT.CLASS",
-           "Account Categories" = "ACCOUNT.CATEGORY",
-           "Account Names" = "ACCOUNT.NAME")
+           "...Account Categories" = "ACCOUNT.CATEGORY",
+           "......Account Names" = "ACCOUNT.NAME")
   })
   
   output$title3 = renderText({
