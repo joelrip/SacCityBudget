@@ -118,10 +118,10 @@ dashboardPage(
                       account name</em>.
                   </ul>
                   If you select a specific item in the second column, a third column will appear here, allowing you
-                  refine your selection further. With practice, you can use this tool to make all kinds of interesting
+                  refine your selection even further. With practice, you can use this tool to make all kinds of interesting
                   comparisons. For example:
                   <br><br>
-                  <em>To compare the amount paid for hours worked in each City Councilmember's office, select
+                  <em>To compare the total amount paid for hours worked in each City Councilmember's office, select
                   Departments: Mayor/Council -> Account Names: Regular Hours -> Sections.
                   <br><br>
                   To see how much the city spends on interest payments on outstanding debt, select Object Classes:
