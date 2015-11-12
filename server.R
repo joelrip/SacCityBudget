@@ -114,9 +114,9 @@ server <- function(input, output, session) {
     paste0(input$secondary, ": ", input$secondarySub)
   })
   
-  observe({
-    toggleState(id = "secondary", condition = input$primarySub != 'All')
-  })
+#  observe({
+#    toggleState(id = "secondary", condition = input$primarySub != 'All')
+#  })
   
   output$table2 = renderDataTable({
     if (input$primarySub == "All" | input$secondary == "") {
