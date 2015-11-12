@@ -114,7 +114,7 @@ server <- function(input, output, session) {
     paste0(input$secondary, ": ", input$secondarySub)
   })
   
-#  observe({
+#  observe({ 
 #    toggleState(id = "secondary", condition = input$primarySub != 'All')
 #  })
   
