@@ -12,7 +12,7 @@ grand_total = sum(SacBudget$BUDGET.AMOUNT[which(SacBudget$EXP.REV == "Expenses" 
 departments = as.character(unique(SacBudget$DEPARTMENT))[order(as.character(unique(SacBudget$DEPARTMENT)))]
 fund_types = as.character(unique(SacBudget$FUND.TYPE))[order(as.character(unique(SacBudget$FUND.TYPE)))]
 object_class1 = SacBudget$OBJECT.CLASS[which(SacBudget$EXP.REV == "Expenses")]
-object_classes = as.character(unique(object_class1))[order(as.character(unique(object_classes)))]
+object_classes = as.character(unique(object_class1))[order(as.character(unique(object_class1)))]
 
 class_list = function(second_selection, first_selection, first_subselection, budget_data) {
   col_num = which(names(budget_data) == first_selection)
