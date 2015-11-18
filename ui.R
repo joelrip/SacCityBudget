@@ -15,7 +15,7 @@ dashboardPage(
   dashboardBody(
     tags$head(
       tags$style(HTML("
-                        .wrapper {
+                        .skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
                           background-color: #ecf0f5;
                         }
                       "))
