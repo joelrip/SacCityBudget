@@ -139,7 +139,7 @@ dashboardPage(
            conditionalPanel(
              condition = "input.primarySub != 'All' & input.secondarySub != 'All'",
              box(
-               width = NULL, status = "danger",
+               width = NULL, status = "success",
                selectInput("tertiary", label = "Break down your previous selection further by:",
                            choices = list("", "Departments", "...Divisions", "......Sections", "Fund Types", "...Fund Groups",
                                           "......Fund Names", "Account Types", "...Account Categories", "......Account Names"),
@@ -148,11 +148,11 @@ dashboardPage(
 #                            choices = "All")
              ),
              box(
-               title = textOutput("title3"), width = NULL, status = "danger",
+               title = textOutput("title3"), width = NULL, status = "success",
                dataTableOutput("table3")
              ),
              box(
-               width = NULL, background = "red",
+               width = NULL, background = "green",
                h4(textOutput("total3"), align = "center")
              )
            )

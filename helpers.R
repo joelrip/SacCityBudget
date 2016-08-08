@@ -62,3 +62,10 @@ budget_table = function(data_selection, data_subselection, budget_data) {
   return(budget_both)
   
 }
+
+color_from_middle <- function (data, color1, color2, cutpt) 
+{
+  max_val=max(abs(data))
+  JS(sprintf("isNaN(parseFloat(value)) || value < 0 ? 'linear-gradient(90deg, transparent, transparent ' + (%f + value/%s * (Math.abs(%f - 50) + 50)) + '%%, %s ' + (%f + value/%s * (Math.abs(%f - 50) + 50)) + '%%,%s  %f%%,transparent %f%%)': 'linear-gradient(90deg, transparent, transparent %f%%, %s %f%%, %s ' + (%f + value/%s * (Math.abs(%f - 50) + 50)) + '%%, transparent ' + (%f + value/%s * (Math.abs(%f - 50) + 50)) + '%%)'",
+             cutpt,max_val,cutpt,color1,cutpt,max_val,cutpt,color1,cutpt,cutpt,cutpt,color2,cutpt,color2,cutpt,max_val,cutpt,cutpt,max_val,cutpt))
+} 

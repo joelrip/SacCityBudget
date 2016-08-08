@@ -45,10 +45,11 @@ server <- function(input, output, session) {
                                ))
                              )) %>%
       formatStyle("Budget1516",
-                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "steelblue", angle = -90),
-                  backgroundSize = "100% 90%",
-                  backgroundRepeat = "no-repeat",
-                  backgroundPosition = "center"
+                  background=color_from_middle(first_table$Budget1516 * 1.4,'red','steelblue', abs(min(first_table$Budget1516, 0))/(abs(max(first_table$Budget1516, 0) - min(first_table$Budget1516, 0))) * 100),
+#                   background = styleColorBar(c(min(first_table$Budget1516), max(first_table$Budget1516) * 1.4), color = "steelblue"),
+                   backgroundSize = "100% 90%",
+                   backgroundRepeat = "no-repeat",
+                   backgroundPosition = "center"
       ) %>%
       formatStyle("PctChange",
                   color = styleInterval(c(-.2, -.15, -.1, -.05, 0, .05, .1, .15, .2),
@@ -57,7 +58,7 @@ server <- function(input, output, session) {
                   fontWeight = 'bold'
       ) %>%
       formatStyle(c(1:3), fontSize = "12px") %>%
-      formatCurrency("Budget1516", digits = 1) %>%
+      formatCurrency("Budget1516") %>%
       formatPercentage("PctChange")
   })
   
@@ -131,7 +132,8 @@ server <- function(input, output, session) {
                              ))
                              )) %>%
       formatStyle("Budget1516",
-                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "orange", angle = -90),
+                  background=color_from_middle(first_table$Budget1516 * 1.4,'red','orange', abs(min(first_table$Budget1516, 0))/(abs(max(first_table$Budget1516, 0) - min(first_table$Budget1516, 0))) * 100),
+#                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "orange"),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -143,7 +145,7 @@ server <- function(input, output, session) {
                   fontWeight = 'bold'
       ) %>%
       formatStyle(c(1:3), fontSize = "12px") %>%
-      formatCurrency("Budget1516", digits = 2) %>%
+      formatCurrency("Budget1516") %>%
       formatPercentage("PctChange") 
   })
   
@@ -217,7 +219,8 @@ server <- function(input, output, session) {
                              ))
               )) %>%
       formatStyle("Budget1516",
-                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "orangered", angle = -90),
+                  background=color_from_middle(first_table$Budget1516 * 1.4,'red','seagreen', abs(min(first_table$Budget1516, 0))/(abs(max(first_table$Budget1516, 0) - min(first_table$Budget1516, 0))) * 100),
+#                  background = styleColorBar(c(0, max(first_table$Budget1516) * 1.4), color = "orangered"),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -229,7 +232,7 @@ server <- function(input, output, session) {
                   fontWeight = 'bold'
       ) %>%
       formatStyle(c(1:3), fontSize = "12px") %>%
-      formatCurrency("Budget1516", digits = 2) %>%
+      formatCurrency("Budget1516") %>%
       formatPercentage("PctChange") 
   })
   
