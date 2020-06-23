@@ -1,13 +1,13 @@
 # SacCityBudget
 ## Hacking the Sacramento City Budget
 
-This is an exploratory project to visualize data from the City of Sacramento's 2015-16 budget using R and Shiny. It currently uses data from the _proposed_ 2015-16 budget, downloaded from [data.cityofsacramento.org](http://data.cityofsacramento.org/home/) in late June 2015. It will be updated with _adopted_ budget info once that data is posted.
+This is a project to visualize data from the City of Sacramento's Fiscal Year 2018 budget using R and Shiny. It uses data downloaded from [data.cityofsacramento.org](http://data.cityofsacramento.org/home/).
 
 All you need to run the dashboard in its current state is:
 * [R](http://www.r-project.org/)
 * [R Studio](http://www.rstudio.com/)
 * The Shiny, Shiny Dashboard, and DT packages for R
-* ui.R, server.R, and helpers.R from this repository
+* NewAppTotal.R, and helpers2.R from this repository
 
 Current version is up and running at http://explorer.openbudgetsac.org/
 
@@ -15,7 +15,7 @@ Current version is up and running at http://explorer.openbudgetsac.org/
 
 All of the source code for this project is freely available under the [MIT License] (https://opensource.org/licenses/MIT).
 
-Copyright (c) 2015 Code for Sacramento
+Copyright (c) 2020 Code for Sacramento
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
