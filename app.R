@@ -3,6 +3,7 @@
 library(shinydashboard)
 library(shiny)
 library(DT)
+library(dplyr)
 
 source("helpers2.R")
 
@@ -251,6 +252,8 @@ server = function(input, output, session) {
   })
   
   output$table2 = renderDataTable({
+    req(input$primarySub != 'All')
+   
     if (input$primarySub == "All" | input$secondary == "") {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET_AMOUNT" = c(0, 0),
                                "EXPREV" = c("Expenses", "Expenses"), "YEAR" = c("FY17", "FY18"),
@@ -339,13 +342,15 @@ server = function(input, output, session) {
   })
   
   output$table3 = renderDataTable({
-    if (input$secondarySub == "All" | input$tertiary == "" | input$primarySub == "All") {
+    req(input$primarySub != 'All' & input$secondarySub != 'All')
+    
+    if (input$tertiary == "") {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET_AMOUNT" = c(0, 0),
                                "EXPREV" = c("Expenses", "Expenses"), "Year" = c("FY17", "FY18"),
                                "OPERATING_UNIT_DESCRIPTION" = c("One", "One"))
       data_selection = "Category"
       data_subselection = "Nothing Selected"
-    } else if (input$secondarySub != "All" & input$tertiary != "") {
+    } else {
       domain1 = which(names(SacBudget) == data1())
       budget_data1 = SacBudget[which(SacBudget[,domain1] == input$primarySub),]
       domain = which(names(budget_data1) == data2())
