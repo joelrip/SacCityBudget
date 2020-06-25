@@ -7,7 +7,7 @@ All you need to run the dashboard in its current state is:
 * [R](http://www.r-project.org/)
 * [R Studio](http://www.rstudio.com/)
 * The Shiny, Shiny Dashboard, and DT packages for R
-* NewAppTotal.R, and helpers2.R from this repository
+* app.R, and helpers2.R from this repository
 
 Current version is up and running at http://explorer.openbudgetsac.org/
 
