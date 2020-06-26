@@ -1,4 +1,5 @@
-###New app - total
+### Sac City Budget Visualization ###
+### app.R ###
 
 library(shinydashboard)
 library(shiny)
