@@ -23,34 +23,28 @@ class_list = function(second_selection, first_selection, first_subselection, bud
 }
 
 budget_table = function(data_selection, data_subselection, budget_data) {
-  
-  col_num = which(names(budget_data) == data_selection)
-  graph_data = budget_data[ , col_num]
-  
-  #Calculate current and last year's budget for each selected category
-  budget_now = aggregate(budget_data$BUDGET_AMOUNT[which(budget_data$EXPREV == "Expenses" &
-                                                           budget_data$YEAR == "FY18" &
-                                                           budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")] ~
-                           graph_data[which(budget_data$EXPREV == "Expenses" &
-                                              budget_data$YEAR == "FY18" &
-                                              budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")],
-                         "sum", data = budget_data)
-  names(budget_now)[1] = "graph_data"
-  names(budget_now)[2] = "Budget18"
+
+  budget_now = budget_data %>%
+    filter(EXPREV == "Expenses",
+           YEAR == "FY18",
+           OPERATING_UNIT_DESCRIPTION != "Non-Appropriated") %>%
+    select(graph_data = all_of(data_selection),
+           BUDGET_AMOUNT) %>%
+    group_by(graph_data) %>%
+    summarise(Budget18 = sum(BUDGET_AMOUNT), .groups = "drop")
+    
   if (length(which(budget_data$YEAR == "FY17")) > 0) {
-    budget_last = aggregate(budget_data$BUDGET_AMOUNT[which(budget_data$EXPREV == "Expenses" &
-                                                              budget_data$YEAR == "FY17" &
-                                                              budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")] ~
-                              graph_data[which(budget_data$EXPREV == "Expenses" &
-                                                 budget_data$YEAR == "FY17" &
-                                                 budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")],
-                            "sum", data = budget_data)
-    names(budget_last)[1] = "graph_data"
-    names(budget_last)[2] = "Budget17"
+    budget_last = budget_data %>%
+      filter(EXPREV == "Expenses",
+             YEAR == "FY17",
+             OPERATING_UNIT_DESCRIPTION != "Non-Appropriated") %>%
+      select(graph_data = all_of(data_selection),
+             BUDGET_AMOUNT) %>%
+      group_by(graph_data) %>%
+      summarise(Budget17 = sum(BUDGET_AMOUNT), .groups = "drop")
   } else {
     budget_last = data.frame("graph_data" = "None", "Budget17" = 0)
   }
-
   
   #Calculate percent change from year to year
   budget_both = merge(budget_now, budget_last, all.x = TRUE)
