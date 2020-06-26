@@ -4,12 +4,14 @@
 #Read in data and calculate one-time variables
 SacBudget = read.csv("data/Approved_Budget_FY_2015__FY_2018.csv", stringsAsFactors = F)
 names(SacBudget)[22] = "OBJECT_CLASS"
+SacBudget$FUND_GROUP[which(SacBudget$FUND_GROUP == "Fund Total")] = "General Funds"
 
 grand_total = sum(SacBudget$BUDGET_AMOUNT[which(SacBudget$EXPREV == "Expenses" &
                                                   SacBudget$YEAR == "FY18" &
                                                   SacBudget$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
 
 departments = as.character(unique(SacBudget$OPERATING_UNIT_DESCRIPTION))[order(as.character(unique(SacBudget$OPERATING_UNIT_DESCRIPTION)))]
+departments = departments[which(departments != "Non-Appropriated")]
 fund_types = as.character(unique(SacBudget$FUND_GROUP))[order(as.character(unique(SacBudget$FUND_GROUP)))]
 object_class1 = SacBudget$OBJECT_CLASS[which(SacBudget$EXPREV == "Expenses")]
 object_classes = as.character(unique(object_class1))[order(as.character(unique(object_class1)))]
