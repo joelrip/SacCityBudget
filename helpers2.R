@@ -6,10 +6,6 @@ SacBudget = read.csv("data/Approved_Budget_FY_2015__FY_2018.csv", stringsAsFacto
 names(SacBudget)[22] = "OBJECT_CLASS"
 SacBudget$FUND_GROUP[which(SacBudget$FUND_GROUP == "Fund Total")] = "General Funds"
 
-grand_total = sum(SacBudget$BUDGET_AMOUNT[which(SacBudget$EXPREV == "Expenses" &
-                                                  SacBudget$YEAR == "FY18" &
-                                                  SacBudget$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
-
 departments = as.character(unique(SacBudget$OPERATING_UNIT_DESCRIPTION))[order(as.character(unique(SacBudget$OPERATING_UNIT_DESCRIPTION)))]
 departments = departments[which(departments != "Non-Appropriated")]
 fund_types = as.character(unique(SacBudget$FUND_GROUP))[order(as.character(unique(SacBudget$FUND_GROUP)))]
@@ -18,7 +14,7 @@ object_classes = as.character(unique(object_class1))[order(as.character(unique(o
 
 class_list = function(second_selection, first_selection, first_subselection, budget_data) {
   col_num = which(names(budget_data) == first_selection)
-  temp = budget_data[which(budget_data[,col_num] == first_subselection & budget_data$YEAR == "FY18"),]
+  temp = budget_data[which(budget_data[,col_num] %in% first_subselection & budget_data$YEAR == "FY18"),]
   col_num2 = which(names(temp) == second_selection)
   returner = as.character(unique(temp[,col_num2]))[order(as.character(unique(temp[,col_num2])))]
   return(as.list(c("All",returner)))
@@ -55,7 +51,7 @@ budget_table = function(data_selection, data_subselection, budget_data) {
   
   #Subset to sub-selection, if necessary
   if (data_subselection != "All") {
-    budget_both = budget_both[which(budget_both$graph_data == data_subselection), ]
+    budget_both = budget_both[which(budget_both$graph_data %in% data_subselection), ]
   }
   
   budget_both$Budget18 = round(budget_both$Budget18 / 1000000, digits = 2)
