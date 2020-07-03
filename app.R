@@ -30,8 +30,7 @@ ui = dashboardPage(
              
              selectInput("primary", label = "What do you want to break the budget down by first?",
                          choices = list("Departments", "Fund Types",
-                                        "Account Types"), selected = "Departments"),
-             textOutput("instructions1")
+                                        "Account Types"), selected = "Departments")
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",
@@ -216,17 +215,8 @@ server = function(input, output, session) {
     }
   })
   
-  output$instructions1 = renderText({
-    if (is.null(input$table1_rows_selected)) {
-      text = "Click one or more rows in the table below to examine that aspect of the budget in more detail."
-    } else {
-      text = ""
-    }
-    text
-  })
-  
   output$title1 = renderText({
-    paste0(input$primary)
+    "Click one or more rows to explore details."
   })
   
   first_table = reactive({
@@ -384,7 +374,15 @@ server = function(input, output, session) {
   })
   
   output$title3 = renderText({
-    input$tertiary
+    entities = second_table()[input$table2_rows_selected, 1]
+    if (length(entities) == 1) {
+      title = entities
+    } else if (length(entities) < 5) {
+      title = paste0("Combination of ", paste0(entities, collapse = ", "))
+    } else {
+      title = paste0("Combination of ", length(entities), " Selections")
+    }
+    title
   })
   
   third_table = reactive({
