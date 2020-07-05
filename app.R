@@ -259,12 +259,7 @@ server = function(input, output, session) {
   })
   
   output$total1 = renderText({
-    if ("All" %in% selected_rows$primary_table) {
-      total_budget = sum(first_table()[, 2])
-    } else {
-      total_budget = sum(first_table()[input$table1_rows_selected, 2])
-    }
-    paste0("Total Budget: $", round(total_budget, digits = 1), " million")
+    paste0("Total Budget: $", round(sum(first_table()[ 2]), digits = 1), " million")
   })
   
   data2 <- reactive({
@@ -352,12 +347,7 @@ server = function(input, output, session) {
   })
   
   output$total2 = renderText({
-    if ("All" %in% selected_rows$secondary_table) {
-      total_budget = sum(second_table()[, 2])
-    } else {
-      total_budget = sum(second_table()[input$table2_rows_selected, 2])
-    }
-    paste0("Total Budget: $", round(total_budget, digits = 1), " million")
+    paste0("Total Budget: $", round(sum(second_table()[ 2]), digits = 1), " million")
   })
   
   data3 <- reactive({
@@ -441,12 +431,7 @@ server = function(input, output, session) {
   })
   
   output$total3 = renderText({
-    if ("All" %in% selected_rows$tertiary_table) {
-      total_budget = sum(third_table()[, 2])
-    } else {
-      total_budget = sum(third_table()[input$table3_rows_selected, 2])
-    }
-    paste0("Total Budget: $", round(total_budget, digits = 1), " million")
+    paste0("Total Budget: $", round(sum(third_table()[ 2]), digits = 1), " million")
   })
   
 }
