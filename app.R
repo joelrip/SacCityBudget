@@ -23,21 +23,17 @@ ui = dashboardPage(
                       background-color: #ecf0f5;
                       }
                       "))
-      ),
+    ),
     column(width = 4,
            box(
              width = NULL, status = "primary",
              
              selectInput("primary", label = "What do you want to break the budget down by first?",
                          choices = list("Departments", "Fund Types",
-                                        "Account Types"), selected = "Departments"),
-             
-             selectInput("primarySub", label = "To explore in more detail, select a specific one:",
-                         choices = "All")
+                                        "Account Types"), selected = "Departments")
            ),
            box(
              title = textOutput("title1"), width = NULL, status = "primary",
-             #             plotOutput("chart1"),
              dataTableOutput("table1")
            ),
            box(
@@ -47,7 +43,7 @@ ui = dashboardPage(
     ),
     
     conditionalPanel(
-      condition = "input.primarySub == 'All'",
+      condition = "!output.show_table2",
       column(width = 8,
              HTML("
                   <h1>What is this?</h1>
@@ -72,29 +68,26 @@ ui = dashboardPage(
                   amount, and by change from the previous year.</h4>
                   <h3>Explore</h3>
                   <h4>
-                  To explore part of the budget in more detail, just select a specific department, fund type,
-                  or account type in the appropriate dropdown menu, and a second column will appear right here, with
+                  To explore part of the budget in more detail, just select specific departments, fund types,
+                  or account types by clicking rows in the table, and a second column will appear right here, with
                   information on the item you selected.
                   <br><br>
                   <i>Note: The city renamed and reorganized several divisions within its departments between
                   fiscal year 2017 and fiscal year 2018. If a division is new or has a different name in 2018,
                   it will not show a percentage change from the previous year.</i></h4>
                   ")
-             )
-             ),
+      )
+    ),
     
     column(width = 4,
            conditionalPanel(
-             condition = "input.primarySub != 'All'",
+             condition = "output.show_table2",
              box(
                width = NULL, status = "warning",
                selectInput("secondary", label = "Break down your previous selection further by:",
                            choices = list("", "Departments", "...Divisions", "......Sections", "Fund Types", "...Fund Groups",
                                           "......Fund Names", "Account Types", "...Account Categories", "......Account Names"),
-                           selected = "Fund Types"),
-               
-               selectInput("secondarySub", label = "To explore in more detail, select a specific one:",
-                           choices = "All")
+                           selected = "Fund Types")
              ),
              box(
                title = textOutput("title2"), width = NULL, status = "warning",
@@ -109,7 +102,7 @@ ui = dashboardPage(
     
     column(width = 4,
            conditionalPanel(
-             condition = "input.primarySub != 'All' & input.secondarySub == 'All'",
+             condition = "output.show_table2 & !output.show_table3",
              HTML("
                   <h1>Now what?</h1>
                   <h4>Now that you've made a selection, you can break that piece of the budget down into finer
@@ -124,7 +117,7 @@ ui = dashboardPage(
                   account type</em>, Employee Benefits <em>account category</em>, PERS Retirement <em>
                   account name</em>.
                   </ul>
-                  If you select a specific item in the second column, a third column will appear here, allowing you
+                  If you click rows in the second column, a third column will appear here, allowing you
                   refine your selection even further. With practice, you can use this tool to make all kinds of interesting
                   comparisons. For example:
                   <br><br>
@@ -138,9 +131,9 @@ ui = dashboardPage(
                   -> Account Names: PERS Retirement -> Departments.</em>
                   </h4>
                   ")
-             ),
+           ),
            conditionalPanel(
-             condition = "input.primarySub != 'All' & input.secondarySub != 'All'",
+             condition = "output.show_table2 & output.show_table3",
              box(
                width = NULL, status = "success",
                selectInput("tertiary", label = "Break down your previous selection further by:",
@@ -157,8 +150,8 @@ ui = dashboardPage(
                h4(textOutput("total3"), align = "center")
              )
            )
-        )
     )
+  )
 )
 
 server = function(input, output, session) {
@@ -176,17 +169,64 @@ server = function(input, output, session) {
            "Account Types" = as.list(c("All",object_classes)))
   })
   
+  selected_rows = reactiveValues(primary_table = NULL,
+                                 secondary_table = NULL,
+                                 tertiary_table = NULL)
+  
+  output$show_table2 = reactive ({
+    if (is.null(input$table1_rows_selected)) {
+      show = FALSE
+    } else {
+      show = TRUE
+    }
+    show
+  })
+  outputOptions(output, "show_table2", suspendWhenHidden = FALSE)
+  
+  output$show_table3 = reactive ({
+    if (is.null(input$table2_rows_selected)) {
+      show = FALSE
+    } else {
+      show = TRUE
+    }
+    show
+  })
+  outputOptions(output, "show_table3", suspendWhenHidden = FALSE)
+  
   observe({
-    updateSelectInput(session, "primarySub", choices = classification_list())
+    if (is.null(input$table1_rows_selected)) {
+      selected_rows$primary_table = "All"
+    } else {
+      selected_rows$primary_table = first_table()[input$table1_rows_selected, 1]
+    }
+  })
+  observe({
+    if (is.null(input$table2_rows_selected)) {
+      selected_rows$secondary_table = "All"
+    } else {
+      selected_rows$secondary_table = second_table()[input$table2_rows_selected, 1]
+    }
+  })
+  observe({
+    if (is.null(input$table3_rows_selected)) {
+      selected_rows$tertiary_table = "All"
+    } else {
+      selected_rows$tertiary_table = third_table()[input$table3_rows_selected, 1]
+    }
   })
   
   output$title1 = renderText({
-    paste0(input$primary, ": ", input$primarySub)
+    "Click one or more rows to explore details."
+  })
+  
+  first_table = reactive({
+    first_table = budget_table(data1(), "All", SacBudget)
+    first_table = first_table[,c(1,2,4)]
+    first_table
   })
   
   output$table1 = renderDataTable({
-    first_table = budget_table(data1(), input$primarySub, SacBudget)
-    first_table = first_table[,c(1,2,4)]
+    first_table = first_table()
     datatable(first_table, rownames = FALSE, class = "compact",
               colnames = c("", "Amount in Millions", "Change"),
               options = list(searching = FALSE,
@@ -219,16 +259,7 @@ server = function(input, output, session) {
   })
   
   output$total1 = renderText({
-    if (input$primarySub == "All") {
-      total_budget = grand_total
-    } else {
-      domain = which(names(SacBudget) == data1())
-      total_budget = sum(SacBudget$BUDGET_AMOUNT[which(SacBudget[,domain] == input$primarySub &
-                                                         SacBudget$EXPREV == "Expenses" &
-                                                         SacBudget$YEAR == "FY18" &
-                                                         SacBudget$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
-    }
-    paste0("Total Budget: $", round(total_budget / 1000000, digits = 1), " million")
+    paste0("Total Budget: $", round(sum(first_table()[ 2]), digits = 1), " million")
   })
   
   data2 <- reactive({
@@ -245,36 +276,46 @@ server = function(input, output, session) {
   })
   
   observe({
-    updateSelectInput(session, "secondarySub", choices = class_list(data2(), data1(), input$primarySub, SacBudget))
+    updateSelectInput(session, "secondarySub", choices = class_list(data2(), data1(), selected_rows$primary_table, SacBudget))
   })
   
   output$title2 = renderText({
-    paste0(input$secondary, ": ", input$secondarySub)
+    entities = first_table()[input$table1_rows_selected, 1]
+    if (length(entities) == 1) {
+      title = entities
+    } else if (length(entities) < 5) {
+      title = paste0("Combination of ", paste0(entities, collapse = ", "))
+    } else {
+      title = paste0("Combination of ", length(entities), " Selections")
+    }
+    title
   })
   
-  output$table2 = renderDataTable({
-    req(input$primarySub != 'All')
-   
-    if (input$primarySub == "All" | input$secondary == "") {
+  second_table = reactive({
+    req(selected_rows$primary_table[1] != 'All')
+    
+    if ("All" %in% selected_rows$primary_table) {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET_AMOUNT" = c(0, 0),
                                "EXPREV" = c("Expenses", "Expenses"), "YEAR" = c("FY17", "FY18"),
                                "OPERATING_UNIT_DESCRIPTION" = c("One", "One"))
       data_selection = "Category"
       data_subselection = "Nothing Selected"
-    } else if (input$primarySub != "All") {
+    } else {
       domain = which(names(SacBudget) == data1())
-      budget_data = SacBudget[which(SacBudget[,domain] == input$primarySub),]
+      budget_data = SacBudget[which(SacBudget[,domain] %in% selected_rows$primary_table),]
       data_selection = data2()
-      data_subselection = input$secondarySub
-    } else if (input$secondarySub != "All") {
-      domain = data2()
-      budget_data = SacBudget[which(SacBudget$domain == input$secondarySub),]
-      data_selection = data1()
-      data_subselection = input$primarySub
-    }
-    first_table = budget_table(data_selection, data_subselection, budget_data)
-    first_table = first_table[,c(1,2,4)]
-    datatable(first_table, rownames = FALSE, class = "compact",
+      data_subselection = "All"
+    } 
+
+    second_table = budget_table(data_selection, data_subselection, budget_data)
+    second_table = second_table[,c(1,2,4)]
+    
+    second_table
+  })
+  
+  output$table2 = renderDataTable({
+    second_table = second_table()
+    datatable(second_table, rownames = FALSE, class = "compact",
               colnames = c("", "Amount in Millions", "Change"),
               options = list(searching = FALSE,
                              pageLength = 40,
@@ -289,7 +330,7 @@ server = function(input, output, session) {
                              ))
               )) %>%
       formatStyle("Budget18",
-                  background=color_from_middle(first_table$Budget18 * 1.4,'red','orange', abs(min(first_table$Budget18, 0))/(abs(max(first_table$Budget18, 0) - min(first_table$Budget18, 0))) * 100),
+                  background=color_from_middle(second_table$Budget18 * 1.4,'red','orange', abs(min(second_table$Budget18, 0))/(abs(max(second_table$Budget18, 0) - min(second_table$Budget18, 0))) * 100),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -306,23 +347,7 @@ server = function(input, output, session) {
   })
   
   output$total2 = renderText({
-    if (input$secondarySub == "All") {
-      domain = which(names(SacBudget) == data1())
-      total_budget = sum(SacBudget$BUDGET_AMOUNT[which(SacBudget[,domain] == input$primarySub &
-                                                         SacBudget$EXPREV == "Expenses" &
-                                                         SacBudget$YEAR == "FY18" &
-                                                         SacBudget$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
-    } else {
-      domain1 = which(names(SacBudget) == data1())
-      budget_data1 = SacBudget[which(SacBudget[,domain1] == input$primarySub),]
-      domain = which(names(budget_data1) == data2())
-      budget_data = budget_data1[which(budget_data1[,domain] == input$secondarySub),]
-      total_budget = sum(budget_data$BUDGET_AMOUNT[which(budget_data[,domain] == input$secondarySub &
-                                                           budget_data$EXPREV == "Expenses" &
-                                                           budget_data$YEAR == "FY18" &
-                                                           budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
-    }
-    paste0("Total Budget: $", round(total_budget / 1000000, digits = 2), " million")
+    paste0("Total Budget: $", round(sum(second_table()[ 2]), digits = 1), " million")
   })
   
   data3 <- reactive({
@@ -339,12 +364,19 @@ server = function(input, output, session) {
   })
   
   output$title3 = renderText({
-    input$tertiary
+    entities = second_table()[input$table2_rows_selected, 1]
+    if (length(entities) == 1) {
+      title = entities
+    } else if (length(entities) < 5) {
+      title = paste0("Combination of ", paste0(entities, collapse = ", "))
+    } else {
+      title = paste0("Combination of ", length(entities), " Selections")
+    }
+    title
   })
   
-  output$table3 = renderDataTable({
-    req(input$primarySub != 'All' & input$secondarySub != 'All')
-    
+  third_table = reactive({
+    req(selected_rows$primary_table[1] != 'All' & selected_rows$secondary_table[1] != 'All')
     if (input$tertiary == "") {
       budget_data = data.frame("Category" = c("Nothing Selected", "Nothing Selected"), "BUDGET_AMOUNT" = c(0, 0),
                                "EXPREV" = c("Expenses", "Expenses"), "Year" = c("FY17", "FY18"),
@@ -353,15 +385,21 @@ server = function(input, output, session) {
       data_subselection = "Nothing Selected"
     } else {
       domain1 = which(names(SacBudget) == data1())
-      budget_data1 = SacBudget[which(SacBudget[,domain1] == input$primarySub),]
+      budget_data1 = SacBudget[which(SacBudget[,domain1] %in% selected_rows$primary_table),]
       domain = which(names(budget_data1) == data2())
-      budget_data = budget_data1[which(budget_data1[,domain] == input$secondarySub),]
+      budget_data = budget_data1[which(budget_data1[,domain] %in% selected_rows$secondary_table),]
       data_selection = data3()
       data_subselection = "All"
     }
-    first_table = budget_table(data_selection, data_subselection, budget_data)
-    first_table = first_table[,c(1,2,4)]
-    datatable(first_table, rownames = FALSE, class = "compact",
+    third_table = budget_table(data_selection, data_subselection, budget_data)
+    third_table = third_table[,c(1,2,4)]
+    
+    third_table
+  })
+  
+  output$table3 = renderDataTable({
+    third_table = third_table()
+    datatable(third_table, rownames = FALSE, class = "compact",
               colnames = c("", "Amount in Millions", "Change"),
               options = list(searching = FALSE,
                              pageLength = 40,
@@ -376,7 +414,7 @@ server = function(input, output, session) {
                              ))
               )) %>%
       formatStyle("Budget18",
-                  background=color_from_middle(first_table$Budget18 * 1.4,'red','seagreen', abs(min(first_table$Budget18, 0))/(abs(max(first_table$Budget18, 0) - min(first_table$Budget18, 0))) * 100),
+                  background=color_from_middle(third_table$Budget18 * 1.4,'red','seagreen', abs(min(third_table$Budget18, 0))/(abs(max(third_table$Budget18, 0) - min(third_table$Budget18, 0))) * 100),
                   backgroundSize = "100% 90%",
                   backgroundRepeat = "no-repeat",
                   backgroundPosition = "center"
@@ -393,19 +431,7 @@ server = function(input, output, session) {
   })
   
   output$total3 = renderText({
-    if (input$secondarySub != "All" & input$tertiary != "") {
-      domain1 = which(names(SacBudget) == data1())
-      budget_data1 = SacBudget[which(SacBudget[,domain1] == input$primarySub),]
-      domain = which(names(budget_data1) == data2())
-      budget_data = budget_data1[which(budget_data1[,domain] == input$secondarySub),]
-      total_budget = sum(budget_data$BUDGET_AMOUNT[which(budget_data[,domain] == input$secondarySub &
-                                                           budget_data$EXPREV == "Expenses" &
-                                                           budget_data$YEAR == "FY18" &
-                                                           budget_data$OPERATING_UNIT_DESCRIPTION != "Non-Appropriated")])
-    } else {
-      total_budget = 0
-    }
-    paste0("Total Budget: $", round(total_budget / 1000000, digits = 2), " million")
+    paste0("Total Budget: $", round(sum(third_table()[ 2]), digits = 1), " million")
   })
   
 }
